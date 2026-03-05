@@ -1,0 +1,51 @@
+services:
+  origin:
+    build:
+      context: .
+      dockerfile: origin/Dockerfile
+    ports:
+      - "8000:8000"
+
+  edge1:
+    build:
+      context: .
+      dockerfile: edge/Dockerfile
+    environment:
+      - ORIGIN_URL=http://origin:8000
+    ports:
+      - "8001:8001"
+    depends_on:
+      - origin
+
+  edge2:
+    build:
+      context: .
+      dockerfile: edge/Dockerfile
+    environment:
+      - ORIGIN_URL=http://origin:8000
+    ports:
+      - "8002:8001"
+    depends_on:
+      - origin
+
+  edge3:
+    build:
+      context: .
+      dockerfile: edge/Dockerfile
+    environment:
+      - ORIGIN_URL=http://origin:8000
+    ports:
+      - "8003:8001"
+    depends_on:
+      - origin
+
+  client:
+    build:
+      context: .
+      dockerfile: client/Dockerfile
+    volumes:
+      - ./results:/results
+    depends_on:
+      - edge1
+      - edge2
+      - edge3
